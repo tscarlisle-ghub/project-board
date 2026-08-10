@@ -973,7 +973,7 @@
           "id": 93,
           "name": "check site per Joe's email",
           "days": 1,
-          "done": false,
+          "done": true,
           "createdAt": "2026-07-28T14:26:14.699Z",
           "due": "2026-07-28",
           "who": "Maddie"
