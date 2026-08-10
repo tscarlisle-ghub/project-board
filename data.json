@@ -964,7 +964,7 @@
           "id": 80,
           "name": "Construction drawings",
           "days": 16,
-          "done": false,
+          "done": true,
           "createdAt": "2026-07-14T14:00:50.606Z",
           "due": "2026-07-30",
           "who": "Maddie"
