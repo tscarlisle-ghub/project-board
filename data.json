@@ -996,7 +996,24 @@
         "CA": 0
       },
       "tasks": []
+    },
+    {
+      "id": 100,
+      "name": "Holly & Girod Cole",
+      "colorIdx": 0,
+      "archived": false,
+      "type": "prospect",
+      "staff": "Scott",
+      "lead": "TSC",
+      "designPercent": 0,
+      "phasePercents": {
+        "SD": 0,
+        "DD": 0,
+        "CD": 0,
+        "CA": 0
+      },
+      "tasks": []
     }
   ],
-  "nextId": 100
+  "nextId": 101
 }
