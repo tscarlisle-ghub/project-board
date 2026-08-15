@@ -948,7 +948,7 @@
       "id": 79,
       "name": "Grantier",
       "colorIdx": 0,
-      "archived": false,
+      "archived": true,
       "type": "new-construction",
       "staff": "Maddie",
       "lead": "TSC",
