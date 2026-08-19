@@ -40,7 +40,7 @@
           "id": 86,
           "name": "Fireplace Section",
           "days": 3,
-          "done": false,
+          "done": true,
           "createdAt": "2026-07-14T15:19:49.620Z",
           "due": "2026-07-17",
           "who": "Kathleen"
