@@ -882,7 +882,7 @@
           "id": 77,
           "name": "Variance",
           "days": 23,
-          "done": false,
+          "done": true,
           "createdAt": "2026-07-28T14:41:13.566Z",
           "due": "2026-08-20",
           "who": "Scott"
