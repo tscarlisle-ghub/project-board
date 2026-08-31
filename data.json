@@ -633,7 +633,7 @@
       "id": 39,
       "name": "Sanders, Jim and Betsy",
       "colorIdx": 9,
-      "archived": false,
+      "archived": true,
       "type": "in-construction",
       "tasks": [
         {
