@@ -1039,7 +1039,24 @@
         "CA": 0
       },
       "tasks": []
+    },
+    {
+      "id": 103,
+      "name": "Holly Cole",
+      "colorIdx": 0,
+      "archived": false,
+      "type": "prospect",
+      "staff": "Scott",
+      "lead": "TSC",
+      "designPercent": 0,
+      "phasePercents": {
+        "SD": 0,
+        "DD": 0,
+        "CD": 0,
+        "CA": 0
+      },
+      "tasks": []
     }
   ],
-  "nextId": 103
+  "nextId": 104
 }
