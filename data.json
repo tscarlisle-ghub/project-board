@@ -222,7 +222,7 @@
       "id": 13,
       "name": "Visintainer",
       "colorIdx": 8,
-      "archived": true,
+      "archived": false,
       "tasks": [
         {
           "id": 22,
