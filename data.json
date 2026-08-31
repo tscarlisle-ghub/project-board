@@ -591,7 +591,7 @@
       "id": 37,
       "name": "Lepere",
       "colorIdx": 7,
-      "archived": false,
+      "archived": true,
       "type": "in-construction",
       "tasks": [],
       "staff": "Scott",
