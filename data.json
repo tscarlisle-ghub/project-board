@@ -64,7 +64,7 @@
           "who": "Kathleen"
         }
       ],
-      "type": "new-construction",
+      "type": "in-construction",
       "staff": "Kathleen",
       "designPercent": 0,
       "phasePercents": {
@@ -327,7 +327,7 @@
       "id": 24,
       "name": "Russell Lands",
       "colorIdx": 0,
-      "archived": false,
+      "archived": true,
       "type": "new-construction",
       "tasks": [
         {
