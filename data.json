@@ -895,6 +895,15 @@
           "createdAt": "2026-07-14T14:41:26.309Z",
           "due": "2026-07-17",
           "who": "Scott"
+        },
+        {
+          "id": 105,
+          "name": "Construction drawings",
+          "days": 7,
+          "done": false,
+          "createdAt": "2026-09-08T14:05:47.585Z",
+          "due": "2026-09-15",
+          "who": "Kathleen"
         }
       ],
       "lead": "TSC"
@@ -1041,5 +1050,5 @@
       "tasks": []
     }
   ],
-  "nextId": 105
+  "nextId": 106
 }
