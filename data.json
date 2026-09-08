@@ -1022,7 +1022,24 @@
         "CA": 0
       },
       "tasks": []
+    },
+    {
+      "id": 104,
+      "name": "Ivo Fernandez",
+      "colorIdx": 0,
+      "archived": false,
+      "type": "new-construction",
+      "staff": "Scott",
+      "lead": "TSC",
+      "designPercent": 0,
+      "phasePercents": {
+        "SD": 0,
+        "DD": 0,
+        "CD": 0,
+        "CA": 0
+      },
+      "tasks": []
     }
   ],
-  "nextId": 104
+  "nextId": 105
 }
