@@ -166,6 +166,15 @@
           "createdAt": "2026-07-28T14:59:06.494Z",
           "due": "2026-07-28",
           "who": "Maddie"
+        },
+        {
+          "id": 107,
+          "name": "Finish construction drawings",
+          "days": 20,
+          "done": false,
+          "createdAt": "2026-09-14T22:41:03.749876Z",
+          "due": "2026-10-05",
+          "who": "Maddie"
         }
       ],
       "type": "new-construction",
@@ -1050,5 +1059,5 @@
       "tasks": []
     }
   ],
-  "nextId": 107
+  "nextId": 108
 }
