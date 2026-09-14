@@ -1178,7 +1178,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--serif);}
         <p id="ed-counts" style="font-family:var(--titling);font-size:9.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-mute);margin:10px 0 0;"></p>
       </div>
       <div style="text-align:right;font-family:var(--titling);font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:var(--ink-mute);line-height:2;white-space:nowrap;">
-        <div>Carlisle Moore Architects</div><div>Residential Architecture</div><div id="last-sync-label" style="color:var(--rust);text-transform:none;letter-spacing:.06em;"></div><div style="margin-top:11px;display:flex;gap:15px;justify-content:flex-end;align-items:center;"><span class="sync-status" id="sync-status" style="font-family:var(--titling);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--forest);"></span><a class="util-link" onclick="forceSave();return false;">Sync</a><a class="util-link" onclick="triggerImport();return false;">Import</a><a class="util-link" onclick="showSetup();return false;">Settings</a></div>
+        <div>Carlisle Moore Architects</div><div>Residential Architecture</div><div id="last-sync-label" style="color:var(--rust);text-transform:none;letter-spacing:.06em;"></div><div style="margin-top:11px;display:flex;gap:15px;justify-content:flex-end;align-items:center;"><span class="sync-status" id="sync-status" style="font-family:var(--titling);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--forest);"></span><a class="util-link" onclick="forceSave();return false;">Sync</a><a class="util-link" onclick="triggerImport();return false;">Import</a><a class="util-link" onclick="showSetup();return false;">Settings</a><a class="util-link" href="shortcuts://run-shortcut?name=Export%20Board%20Tasks" title="Runs the Export Board Tasks Shortcut on your phone">Sync Reminders</a></div>
       </div>
     </div>
     <nav style="display:flex;gap:26px;align-items:center;padding:17px 0 0;flex-wrap:wrap;">
@@ -1356,8 +1356,8 @@ body{background:var(--paper);color:var(--ink);font-family:var(--serif);}
    tweak is in one block at the top.
    ────────────────────────────────────────────────────────────────── */
 
-const APP_VERSION='1.57';
-const APP_VERSION_DATE='Jul 14, 2026 - 11:50 PM';
+const APP_VERSION='1.58';
+const APP_VERSION_DATE='Sep 14, 2026 - 5:56 PM';
 
 const GH_USER='tscarlisle-ghub',GH_REPO='Project-Board',GH_FILE='data.json',GH_BRANCH='main';
 const GH_API=`https://api.github.com/repos/${GH_USER}/${GH_REPO}/contents/${GH_FILE}`;
