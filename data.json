@@ -1013,7 +1013,17 @@
         "CD": 0,
         "CA": 0
       },
-      "tasks": []
+      "tasks": [
+        {
+          "id": 106,
+          "name": "TEST \u2014 chat task intake wired up, delete me",
+          "days": 2,
+          "done": false,
+          "createdAt": "2026-09-14T18:39:37.832508Z",
+          "due": "2026-09-17",
+          "who": "Scott"
+        }
+      ]
     },
     {
       "id": 100,
@@ -1050,5 +1060,5 @@
       "tasks": []
     }
   ],
-  "nextId": 106
+  "nextId": 107
 }
