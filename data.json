@@ -828,7 +828,7 @@
           "id": 81,
           "name": "Schematic Design",
           "days": 24,
-          "done": false,
+          "done": true,
           "createdAt": "2026-07-14T14:32:01.703Z",
           "due": "2026-08-07",
           "who": "Maddie"
