@@ -31,6 +31,49 @@ NEEDS_REVIEW = INBOX_DIR / "needs_review.txt"
 STAFF_MEMBERS = ["Scott", "Maddie", "Kat", "Kathleen"]
 WEEKDAYS = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
 
+NUMBER_WORDS = {
+    "a": 1, "an": 1, "a couple": 2, "one": 1, "couple": 2, "two": 2, "three": 3, "four": 4,
+    "five": 5, "six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10,
+    "eleven": 11, "twelve": 12, "thirteen": 13, "fourteen": 14, "fifteen": 15,
+    "sixteen": 16, "seventeen": 17, "eighteen": 18, "nineteen": 19, "twenty": 20,
+}
+NUM = r"(\d+|a couple(?:\s+of)?|a|an|couple(?:\s+of)?|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty)"
+UNIT = r"(day|week|month)s?"
+
+
+def parse_number(tok):
+    tok = tok.strip()
+    if tok.isdigit():
+        return int(tok)
+    tok = re.sub(r"\s+of$", "", tok)
+    return NUMBER_WORDS.get(tok)
+
+
+def add_units(base, n, unit):
+    unit = unit.rstrip("s")
+    if unit == "day":
+        return base + timedelta(days=n)
+    if unit == "week":
+        return base + timedelta(weeks=n)
+    if unit == "month":
+        import calendar
+        total = base.month - 1 + n
+        year = base.year + total // 12
+        month = total % 12 + 1
+        day = min(base.day, calendar.monthrange(year, month)[1])
+        return base.replace(year=year, month=month, day=day)
+    return base
+
+
+def resolve_weekday(word, next_prefix, today):
+    target = WEEKDAYS.index(word)
+    delta = (target - today.weekday()) % 7
+    if delta == 0:
+        delta = 7
+    if next_prefix:
+        delta += 7
+    return today + timedelta(days=delta)
+
 
 def parse_due(text, today):
     text = text.strip().lower().rstrip(".")
@@ -59,6 +102,36 @@ def parse_due(text, today):
     m = re.match(r"^(in\s+)?(\d+)\s+days?$", text)
     if m:
         return (today + timedelta(days=int(m.group(2)))).isoformat()
+
+    # "three days from now", "in a couple weeks", "2 months from now"
+    m = re.match(rf"^(?:in\s+)?{NUM}\s+{UNIT}(?:\s+from\s+(?:now|today))?$", text)
+    if m:
+        n = parse_number(m.group(1))
+        if n:
+            return add_units(today, n, m.group(2)).isoformat()
+
+    # "three days from tomorrow"
+    m = re.match(rf"^{NUM}\s+{UNIT}\s+from\s+tomorrow$", text)
+    if m:
+        n = parse_number(m.group(1))
+        if n:
+            return add_units(today + timedelta(days=1), n, m.group(2)).isoformat()
+
+    # "three weeks from Tuesday", "two months from next Friday"
+    m = re.match(rf"^{NUM}\s+{UNIT}\s+from\s+(next\s+)?(\w+day)$", text)
+    if m and m.group(4) in WEEKDAYS:
+        n = parse_number(m.group(1))
+        if n:
+            base = resolve_weekday(m.group(4), m.group(3), today)
+            return add_units(base, n, m.group(2)).isoformat()
+
+    # "three weeks from 2026-10-05"
+    m = re.match(rf"^{NUM}\s+{UNIT}\s+from\s+(\d{{4}}-\d{{2}}-\d{{2}})$", text)
+    if m:
+        n = parse_number(m.group(1))
+        if n:
+            base = date.fromisoformat(m.group(3))
+            return add_units(base, n, m.group(2)).isoformat()
 
     m = re.match(r"^(the\s+)?(\d{1,2})(st|nd|rd|th)?$", text)
     if m:
