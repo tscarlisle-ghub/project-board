@@ -4,18 +4,24 @@ Reads dictated task lines from inbox/*.txt, matches each to a project on
 the board, appends a task, updates data.json, and clears processed inbox
 files. Runs inside the "Import Board Tasks" GitHub Action.
 
-Expected line format (one task per line):
-  <project fragment>: <task text>[, due <date>][, <assignee>]
+Line format (one task per line) — the project name comes first, either
+with a colon or just spoken naturally:
+  <project>: <task text>[, due <date>][, <assignee>]
+  <project> <task text>[, due <date>][, <assignee>]
 
 Examples:
   Davis LP: submit permit set, due 2026-10-05, Maddie
   Visintainer: send revised elevations, due friday, Kat
-  Ivy: schedule site visit, due next tuesday
+  Ray project, revise front door, due friday, Kathleen
+  Ivy schedule site visit due next tuesday
 
-Project fragments are matched against board project names with substring
-matching first, then fuzzy matching (so "Ivy" matches "Sarah & Zach Ivey",
-"Visint" matches "Visintainer"). Lines that can't be parsed or matched are
-moved to inbox/needs_review.txt instead of being silently dropped.
+Project names are matched against board project names by trying the
+longest leading word-sequence first, with substring matching first, then
+fuzzy matching (so "Ivy" matches "Sarah & Zach Ivey", "Visint" matches
+"Visintainer"). A trailing filler word like "project" or "job" right after
+the project name is consumed automatically. Lines that can't be parsed or
+matched are moved to inbox/needs_review.txt instead of being silently
+dropped or guessed wrong.
 """
 import json
 import re
@@ -156,16 +162,17 @@ def parse_due(text, today):
         return None
 
 
-def match_project(fragment, projects):
+def score_project(fragment, projects):
+    """Return [(score, project), ...] sorted best-first for how well fragment
+    matches each non-archived project. Exact substring matches score 1.0;
+    otherwise fuzzy-matched against the full name and each name token."""
     frag = fragment.strip().lower()
     if not frag:
-        return None, []
+        return []
 
     exact = [p for p in projects if not p.get("archived") and (frag in p["name"].lower() or p["name"].lower() in frag)]
-    if len(exact) == 1:
-        return exact[0], []
-    if len(exact) > 1:
-        return None, [p["name"] for p in exact]
+    if exact:
+        return [(1.0, p) for p in exact]
 
     scored = []
     for p in projects:
@@ -178,46 +185,125 @@ def match_project(fragment, projects):
         best = max(ratios)
         if best >= 0.72:
             scored.append((best, p))
+    scored.sort(key=lambda x: -x[0])
+    return scored
 
+
+def match_project(fragment, projects):
+    scored = score_project(fragment, projects)
     if not scored:
         return None, []
-    scored.sort(key=lambda x: -x[0])
     if len(scored) >= 2 and scored[0][0] - scored[1][0] < 0.05:
         return None, [p["name"] for _, p in scored[:4]]
     return scored[0][1], []
+
+
+FILLER_WORDS = {"project", "job"}
+
+
+def score_project_prefix(fragment, projects):
+    """Like score_project, but only used for leading-prefix detection: the
+    exact-match check only accepts the candidate being contained IN the
+    project name (never the reverse), and the fuzzy threshold is higher —
+    otherwise a short project name matches inside any long candidate that
+    happens to start with it, swallowing task words into the project."""
+    frag = fragment.strip().lower()
+    if not frag:
+        return []
+
+    exact = [p for p in projects if not p.get("archived") and frag in p["name"].lower()]
+    if exact:
+        return [(1.0, p) for p in exact]
+
+    scored = []
+    for p in projects:
+        if p.get("archived"):
+            continue
+        name = p["name"].lower()
+        tokens = [t for t in re.split(r"[\s,&/-]+", name) if t]
+        ratios = [difflib.SequenceMatcher(None, frag, name).ratio()]
+        ratios += [difflib.SequenceMatcher(None, frag, t).ratio() for t in tokens]
+        best = max(ratios)
+        if best >= 0.84:
+            scored.append((best, p))
+    scored.sort(key=lambda x: -x[0])
+    return scored
+
+
+def find_project_prefix(text, projects, max_words=6):
+    """Try to find a project name as a leading run of words in text, longest
+    run first. Returns (project, words_consumed) or (None, 0). A filler word
+    like "project" right after the matched name is consumed too."""
+    words = text.split()
+    if not words:
+        return None, 0
+
+    top = min(max_words, len(words))
+    for k in range(top, 0, -1):
+        window = words[:k]
+        score_words = window
+        if score_words and score_words[-1].strip(",.").lower() in FILLER_WORDS:
+            score_words = score_words[:-1]
+        if not score_words:
+            continue
+        candidate = " ".join(score_words)
+        scored = score_project_prefix(candidate, projects)
+        if not scored:
+            continue
+        if len(scored) >= 2 and scored[0][0] - scored[1][0] < 0.05:
+            continue
+        consumed = k
+        if consumed < len(words) and words[consumed].strip(",.").lower() in FILLER_WORDS:
+            consumed += 1
+        return scored[0][1], consumed
+
+    return None, 0
 
 
 def parse_line(line, projects, today):
     raw = line.strip()
     if not raw:
         return None
-    if ":" not in raw:
-        return {"error": "no project separator ':' found", "raw": raw}
 
-    frag, rest = raw.split(":", 1)
+    working = raw
 
     who = None
     for name in STAFF_MEMBERS:
-        if re.search(rf"\b{name}\b", rest, re.IGNORECASE):
+        if re.search(rf"\b{name}\b", working, re.IGNORECASE):
             who = name
-            rest = re.sub(rf"\b{name}\b", "", rest, flags=re.IGNORECASE)
+            working = re.sub(rf"\b{name}\b", "", working, flags=re.IGNORECASE)
             break
 
     due = None
-    m = re.search(r"\bdue\b\s+([^,]+)", rest, re.IGNORECASE)
+    m = re.search(r"\bdue\b\s+([^,]+)", working, re.IGNORECASE)
     if m:
         due = parse_due(m.group(1), today)
-        rest = rest[:m.start()] + rest[m.end():]
+        working = working[:m.start()] + working[m.end():]
 
-    task_text = re.sub(r"\s*,\s*,\s*", ", ", rest)
+    working = re.sub(r"\s*,\s*,\s*", ", ", working).strip(" ,.")
+
+    if ":" in working:
+        frag, task_text = working.split(":", 1)
+        task_text = re.sub(r"^[\s,]+", "", task_text).strip(" ,.")
+        project, candidates = match_project(frag, projects)
+        if project is None:
+            detail = f" (candidates: {', '.join(candidates)})" if candidates else ""
+            return {"error": f"project not matched{detail}", "raw": raw}
+        if not task_text:
+            return {"error": "no task text found", "raw": raw}
+        return {"project": project, "task": task_text, "due": due, "who": who, "raw": raw}
+
+    # No colon — find the project as the leading words of the line instead,
+    # so natural dictation like "Ray project, revise front door" works too.
+    words = working.split()
+    project, consumed = find_project_prefix(working, projects)
+    if project is None:
+        return {"error": "project not matched (say the project name first)", "raw": raw}
+
+    task_text = " ".join(words[consumed:])
     task_text = task_text.strip(" ,.")
     if not task_text:
         return {"error": "no task text found", "raw": raw}
-
-    project, candidates = match_project(frag, projects)
-    if project is None:
-        detail = f" (candidates: {', '.join(candidates)})" if candidates else ""
-        return {"error": f"project not matched{detail}", "raw": raw}
 
     return {"project": project, "task": task_text, "due": due, "who": who, "raw": raw}
 
