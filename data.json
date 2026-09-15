@@ -180,7 +180,7 @@
           "id": 108,
           "name": "GitHub Action pipeline test task",
           "days": 3,
-          "done": false,
+          "done": true,
           "createdAt": "2026-09-15T12:15:34.865816Z",
           "due": "2026-09-18",
           "who": "Maddie"
