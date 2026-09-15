@@ -1164,6 +1164,43 @@ body{background:var(--paper);color:var(--ink);font-family:var(--serif);}
 .gtrack{position:relative;height:48px;flex:none;}
 .glegend{display:flex;align-items:center;gap:22px;flex-wrap:wrap;margin-top:24px;font-family:var(--serif);font-style:italic;font-size:13px;color:var(--ink-soft);}
 .glegend>span{display:flex;align-items:center;gap:9px;}
+
+/* ── STAFF LISTS ── */
+.staff-card{border-top:1px solid var(--hairline);padding:20px 0 24px;}
+.staff-card-hdr{display:flex;align-items:baseline;gap:14px;margin-bottom:10px;}
+.staff-card-name{font-family:var(--serif);font-style:italic;font-size:22px;color:var(--ink);}
+.staff-card-count{font-family:var(--titling);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-mute);}
+.staff-print-btn{margin-left:auto;font-family:var(--titling);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft);background:none;border:1px solid var(--hairline-ink);padding:8px 14px;cursor:pointer;transition:background .15s,color .15s;}
+.staff-print-btn:hover:not(:disabled){background:var(--ink);color:#fff;border-color:var(--ink);}
+.staff-print-btn:disabled{opacity:.35;cursor:default;}
+.staff-card-empty{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--ink-mute);padding:6px 0 2px;}
+.staff-task-list{display:flex;flex-direction:column;}
+.staff-task-row{display:flex;align-items:baseline;gap:14px;padding:8px 4px;border-bottom:1px solid var(--hairline-ink);cursor:pointer;font-family:var(--sans-cond);}
+.staff-task-row:hover{background:var(--ink-faint);}
+.staff-task-proj{width:190px;flex:none;font-family:var(--titling);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--rust);}
+.staff-task-name{flex:1;font-size:14px;color:var(--ink);}
+.staff-task-due{flex:none;font-size:11px;color:var(--ink-mute);font-variant-numeric:tabular-nums;}
+
+/* Print-only staff handoff sheet — hidden on screen, shown only via
+   body.printing-staff (toggled by printStaffList) so window.print()
+   renders just this one page instead of the whole app. */
+#staff-print-area{display:none;}
+@media print{
+  body.printing-staff > *:not(#staff-print-area){display:none!important;}
+  body.printing-staff #staff-print-area{display:block!important;}
+  .sp-page{max-width:680px;margin:0 auto;padding:20px;}
+  .sp-hdr{border-bottom:2px solid var(--ink,#2A2520);padding-bottom:14px;margin-bottom:20px;}
+  .sp-hdr-firm{font-family:var(--titling,serif);font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-mute,#8E7E72);}
+  .sp-hdr-title{font-family:var(--serif,serif);font-style:italic;font-size:26px;color:var(--ink,#2A2520);margin-top:6px;}
+  .sp-hdr-name{font-family:var(--titling,serif);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--rust,#A2512D);margin-top:6px;}
+  .sp-proj{font-family:var(--titling,serif);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--rust,#A2512D);margin:18px 0 6px;}
+  .sp-proj:first-child{margin-top:0;}
+  .sp-row{display:flex;align-items:center;gap:12px;padding:7px 0;border-bottom:1px solid #ddd;}
+  .sp-box{width:13px;height:13px;flex:none;border:1.5px solid #2A2520;}
+  .sp-task{flex:1;font-family:var(--sans-cond,sans-serif);font-size:14px;color:#2A2520;}
+  .sp-due{flex:none;font-size:11px;color:#6E5E52;}
+  .sp-empty{font-family:var(--serif,serif);font-style:italic;color:#6E5E52;padding:20px 0;}
+}
 </style>
 </head>
 <body>
@@ -1187,6 +1224,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--serif);}
       <a class="nav-a" id="nav-calendar" onclick="showPage('calendar');return false;">Calendar</a>
       <a class="nav-a" id="nav-archive" onclick="showPage('archive');return false;">Archive</a>
       <a class="nav-a" id="nav-summary" onclick="showPage('summary');return false;">Due</a>
+      <a class="nav-a" id="nav-staff" onclick="showPage('staff');return false;">Staff Lists</a>
       <span style="flex:1;"></span>
       <input id="v5-search" placeholder="Search client" oninput="v5SetQuery(this.value)" style="font-family:var(--sans-cond);font-size:13px;border:0;border-bottom:1px solid var(--hairline-ink);background:transparent;outline:none;padding:5px 2px;width:150px;color:var(--ink);" />
     </nav>
@@ -1280,6 +1318,18 @@ body{background:var(--paper);color:var(--ink);font-family:var(--serif);}
   </div></div>
   <div style="max-width:calc(var(--col-w) + var(--margin-w) * 2 + 80px);margin:0 auto;padding:36px 40px 80px;">
     <div id="summary-content"></div>
+  </div>
+</div>
+
+<!-- ── STAFF LISTS PAGE ── -->
+<div id="staff-page" style="display:none;">
+  <div class="back-bar"><div class="back-bar-inner">
+    <button class="back-btn" onclick="showPage('board')">← Board</button>
+    <span class="back-page-title">/ Staff Lists</span>
+  </div></div>
+  <div style="max-width:calc(var(--col-w) + var(--margin-w) * 2 + 80px);margin:0 auto;padding:36px 40px 80px;">
+    <p style="font-family:var(--serif);font-style:italic;font-size:16px;color:var(--ink-mute);line-height:1.5;max-width:640px;margin:0 0 28px;">Every staff member&rsquo;s open tasks across all projects, grouped by project. Print a list to hand off at the start of the week.</p>
+    <div id="staff-list-content"></div>
   </div>
 </div>
 
@@ -1555,7 +1605,7 @@ function doImport(replace){
 document.addEventListener('DOMContentLoaded',()=>{const ta=document.getElementById('import-text');if(ta)ta.addEventListener('input',updateImportPreview);});
 
 /* ── PAGE NAVIGATION ── */
-const PAGES=['board','gantt','archive','summary','calendar'];
+const PAGES=['board','gantt','archive','summary','calendar','staff'];
 /* ──────────────────────────────────────────────────────────────────
    §15 PAGE NAVIGATION  (showPage + staff filter)
    ────────────────────────────────────────────────────────────────── */
@@ -1570,6 +1620,7 @@ function showPage(page){
   else if(page==='gantt')renderGantt();
   else if(page==='summary')renderSummary();
   else if(page==='calendar')renderCalendarPage();
+  else if(page==='staff')renderStaffLists();
   else if(page==='board')setBoardQuote();
 }
 
@@ -1585,6 +1636,7 @@ function renderCurrentPage(){
   else if(currentPage==='archive')renderArchive();
   else if(currentPage==='gantt')renderGantt();
   else if(currentPage==='calendar')renderCalendarPage();
+  else if(currentPage==='staff')renderStaffLists();
   else renderProjects();
 }
 
@@ -2169,6 +2221,106 @@ function renderSummary(){
   buildSection('Later',buckets.later,{byDay:true});
 }
 
+/* ──────────────────────────────────────────────────────────────────
+   §18b STAFF LISTS  (per-person open tasks + print-friendly handoff)
+   ────────────────────────────────────────────────────────────────── */
+function renderStaffLists(){
+  const el=document.getElementById('staff-list-content');if(!el)return;
+  el.innerHTML='';
+
+  STAFF_MEMBERS.forEach(name=>{
+    const rows=[]; // {proj, task}
+    projects.filter(p=>!p.archived).forEach(p=>{
+      (p.tasks||[]).forEach(t=>{
+        if(t.done)return;
+        const who=t.who||p.staff||DEFAULT_STAFF;
+        if(who===name)rows.push({proj:p,task:t});
+      });
+    });
+    rows.sort((a,b)=>{
+      const da=dueDate(a.task),db=dueDate(b.task);
+      if(da&&db)return da-db;
+      if(da)return -1;
+      if(db)return 1;
+      return 0;
+    });
+
+    const card=document.createElement('div');
+    card.className='staff-card';
+
+    const hdr=document.createElement('div');
+    hdr.className='staff-card-hdr';
+    hdr.innerHTML=`<span class="staff-card-name">${v5Escape(name)}</span><span class="staff-card-count">${rows.length} open task${rows.length===1?'':'s'}</span>`;
+    const printBtn=document.createElement('button');
+    printBtn.className='staff-print-btn';
+    printBtn.textContent='Print list';
+    printBtn.disabled=!rows.length;
+    printBtn.addEventListener('click',()=>printStaffList(name,rows));
+    hdr.appendChild(printBtn);
+    card.appendChild(hdr);
+
+    if(!rows.length){
+      const empty=document.createElement('div');
+      empty.className='staff-card-empty';
+      empty.textContent='No open tasks.';
+      card.appendChild(empty);
+    }else{
+      const list=document.createElement('div');
+      list.className='staff-task-list';
+      rows.forEach(({proj,task})=>{
+        const row=document.createElement('div');
+        row.className='staff-task-row';
+        const dd=dueDate(task);
+        const dueTxt=dd?dd.toLocaleDateString('en-US',{month:'short',day:'numeric'}):'';
+        row.innerHTML=`<span class="staff-task-proj">${v5Escape(v5Title(proj.name))}</span><span class="staff-task-name">${v5Escape(task.name.charAt(0).toUpperCase()+task.name.slice(1).toLowerCase())}</span><span class="staff-task-due">${dueTxt}</span>`;
+        row.addEventListener('click',()=>{showPage('board');openEdit(proj.id,task.id);});
+        list.appendChild(row);
+      });
+      card.appendChild(list);
+    }
+    el.appendChild(card);
+  });
+}
+
+function printStaffList(name,rows){
+  const area=document.getElementById('staff-print-area');if(!area)return;
+  const weekStart=new Date();
+  const dow=weekStart.getDay();
+  const backToMonday=dow===0?6:dow-1;
+  weekStart.setDate(weekStart.getDate()-backToMonday);
+  const weekLabel=weekStart.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+
+  let rowsHtml='';
+  if(!rows.length){
+    rowsHtml='<div class="sp-empty">No open tasks.</div>';
+  }else{
+    let lastProj=null;
+    rows.forEach(({proj,task})=>{
+      if(proj.name!==lastProj){
+        rowsHtml+=`<div class="sp-proj">${v5Escape(v5Title(proj.name))}</div>`;
+        lastProj=proj.name;
+      }
+      const dd=dueDate(task);
+      const dueTxt=dd?dd.toLocaleDateString('en-US',{month:'short',day:'numeric'}):'';
+      rowsHtml+=`<div class="sp-row"><span class="sp-box"></span><span class="sp-task">${v5Escape(task.name.charAt(0).toUpperCase()+task.name.slice(1).toLowerCase())}</span><span class="sp-due">${dueTxt}</span></div>`;
+    });
+  }
+
+  area.innerHTML=`
+    <div class="sp-page">
+      <div class="sp-hdr">
+        <div class="sp-hdr-firm">Carlisle Moore Architects</div>
+        <div class="sp-hdr-title">Week of ${weekLabel}</div>
+        <div class="sp-hdr-name">${v5Escape(name)}</div>
+      </div>
+      <div class="sp-body">${rowsHtml}</div>
+    </div>`;
+
+  document.body.classList.add('printing-staff');
+  window.print();
+}
+window.addEventListener('afterprint',()=>{document.body.classList.remove('printing-staff');});
+
 /* ── CALENDAR ── */
 let calState={month:0,year:0,selected:'',onPick:null};
 /* ──────────────────────────────────────────────────────────────────
@@ -2326,5 +2478,6 @@ setBoardQuote();
 
 /* TSC-BILLING fetch removed in v1.34. */
 </script>
+<div id="staff-print-area"></div>
 </body>
 </html>
