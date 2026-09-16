@@ -26,7 +26,7 @@ dropped or guessed wrong.
 import json
 import re
 import difflib
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -308,6 +308,42 @@ def parse_line(line, projects, today):
     return {"project": project, "task": task_text, "due": due, "who": who, "raw": raw}
 
 
+DUP_WINDOW_HOURS = 24
+
+def normalize_task_name(name):
+    """Lowercase, collapse whitespace, strip trailing punctuation — used to
+    compare task text loosely so "Submit permit set." and "submit permit set"
+    are recognized as the same task."""
+    return re.sub(r"\s+", " ", name.strip().lower()).rstrip(".,")
+
+def find_duplicate(project, task_name, who, now):
+    """Return the existing open task this would duplicate, or None. A match
+    requires the same project, same normalized task text, same assignee
+    (comparing None/'' as equal), and the existing task created within the
+    last DUP_WINDOW_HOURS — so a recurring weekly task dictated again next
+    week is NOT flagged, only an accidental same-day resend."""
+    norm = normalize_task_name(task_name)
+    who_norm = (who or "").strip().lower()
+    for t in project.get("tasks", []):
+        if t.get("done"):
+            continue
+        if normalize_task_name(t.get("name", "")) != norm:
+            continue
+        if (t.get("who") or "").strip().lower() != who_norm:
+            continue
+        created = t.get("createdAt")
+        if not created:
+            continue
+        try:
+            created_dt = datetime.fromisoformat(created.replace("Z", "+00:00"))
+        except Exception:
+            continue
+        age_hours = (now - created_dt).total_seconds() / 3600
+        if 0 <= age_hours <= DUP_WINDOW_HOURS:
+            return t
+    return None
+
+
 def main():
     if not INBOX_DIR.exists():
         return
@@ -333,9 +369,15 @@ def main():
                 failed.append(f"{result['raw']}  -- {result['error']}")
                 continue
 
+            now = datetime.now(timezone.utc)
+            dup = find_duplicate(result["project"], result["task"], result["who"], now)
+            if dup is not None:
+                failed.append(f"{result['raw']}  -- duplicate of existing open task \"{dup['name']}\" on {result['project']['name']} (added within the last {DUP_WINDOW_HOURS}h)")
+                continue
+
             task_id = data["nextId"]
             data["nextId"] += 1
-            created_at = datetime.utcnow().isoformat() + "Z"
+            created_at = now.isoformat().replace("+00:00", "Z")
             days = 0
             if result["due"]:
                 try:
