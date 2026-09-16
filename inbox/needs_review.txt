@@ -5,3 +5,11 @@
 [2026-09-15T14:03:58.575570Z] Revise front door for ray, due Friday, assign to Kathleen  -- no project separator ':' found
 [2026-09-15T14:06:57.235257Z] Revise front door for ray, due Friday, assign to Kathleen  -- no project separator ':' found
 [2026-09-15T14:12:42.097922Z] Revise front door for ray, due Friday, assign to Kathleen  -- no project separator ':' found
+[2026-09-16T15:14:58.633829Z] Davis Liberty Park  -- project not matched (say the project name first)
+[2026-09-16T15:14:58.633841Z] Lorberbaum McNair: quote three car garage extension hourly  -- project not matched
+[2026-09-16T15:14:58.633848Z] Shoemaker  -- no task text found
+[2026-09-16T15:14:58.633853Z] Revise front door for ray, due Friday, assign to Kathleen  -- project not matched (say the project name first)
+[2026-09-16T15:14:58.633858Z] Norwood Vestavia  -- no task text found
+[2026-09-16T15:14:58.633864Z] Davis Winfield  -- project not matched (say the project name first)
+[2026-09-16T15:14:58.633868Z] Cassadabon Magnolia  -- no task text found
+[2026-09-16T15:14:58.633873Z] Willette  -- project not matched (say the project name first)
