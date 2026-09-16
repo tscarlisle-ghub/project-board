@@ -1747,7 +1747,7 @@ function v5ProjectRow(p){
   }else{
     tasksHtml='<div class="csub" style="margin-top:14px;">No open tasks</div>';
   }
-  return `<div class="ccard${expanded?' exp':''} v5-row" data-pid="${p.id}"><div class="cc-top" onclick="v5ToggleExpand(${p.id})"><span class="cname">${v5Escape(v5Title(p.name))}</span><span class="cstat" style="color:${scol};">${v5StatusWord(status)}</span></div><div class="csub">${v5Escape(typeName)} \u00b7 Lead ${v5Escape(staffName)}</div>${tasksHtml}${v5Spark(p)}${expanded?v5ExpandedDetail(p):''}</div>`;
+  return `<div class="ccard${expanded?' exp':''} v5-row" data-pid="${p.id}"><div class="cc-top" onclick="v5ToggleExpand(${p.id})"><span class="cname">${v5Escape(v5Title(p.name))}</span></div><div class="csub">${v5Escape(typeName)} \u00b7 Lead ${v5Escape(staffName)}</div>${tasksHtml}${v5Spark(p)}${expanded?v5ExpandedDetail(p):''}</div>`;
 }
 
 function v5ExpandedDetail(p){
