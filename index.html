@@ -1264,7 +1264,6 @@ body{background:var(--paper);color:var(--ink);font-family:var(--serif);}
       <label>Principal lead</label>
       <select id="v5np-lead">
         <option value="TSC">TSC · T. Scott Carlisle</option>
-        <option value="BM">BM · Bill Moore</option>
       </select>
     </div>
     <div class="v5-modal-field">
@@ -1523,8 +1522,8 @@ const SAMPLE_PROJECTS=[
 
 /* ── GITHUB ── */
 function setStatus(msg,type,dur=0){const el=document.getElementById('sync-status');if(!el)return;el.textContent=msg;el.className='sync-status '+(type||'');if(dur)setTimeout(()=>{el.textContent='';el.className='sync-status';},dur);}
-/* V5 — Principal lead (TSC = T. Scott Carlisle, BM = Bill Moore) */
-const LEAD_NAMES={TSC:'T. Scott Carlisle',BM:'Bill Moore'};
+/* V5 — Principal lead (TSC = T. Scott Carlisle) */
+const LEAD_NAMES={TSC:'T. Scott Carlisle'};
 
 function normalizeProjects(){
   projects.forEach(p=>{
