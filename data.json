@@ -58,7 +58,7 @@
           "id": 101,
           "name": "mockup wall",
           "days": 1,
-          "done": false,
+          "done": true,
           "createdAt": "2026-08-31T15:03:47.261Z",
           "due": "2026-09-01",
           "who": "Kathleen"
