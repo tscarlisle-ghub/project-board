@@ -603,7 +603,7 @@
       "name": "Callahan Barn",
       "colorIdx": 5,
       "archived": false,
-      "type": "renovation",
+      "type": "in-construction",
       "tasks": [
         {
           "id": 63,
