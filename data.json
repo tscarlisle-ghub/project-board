@@ -1120,23 +1120,6 @@
         "CA": 0
       },
       "tasks": []
-    },
-    {
-      "id": 115,
-      "name": "Shoemaker - pricing set",
-      "colorIdx": 7,
-      "archived": false,
-      "type": "",
-      "staff": "Scott",
-      "tasks": [],
-      "designPercent": 0,
-      "lead": "TSC",
-      "phasePercents": {
-        "SD": 0,
-        "DD": 0,
-        "CD": 0,
-        "CA": 0
-      }
     }
   ],
   "nextId": 118
