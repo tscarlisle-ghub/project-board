@@ -1120,7 +1120,16 @@
         "CA": 0
       },
       "tasks": []
+    },
+    {
+      "id": 115,
+      "name": "Shoemaker - pricing set",
+      "colorIdx": 7,
+      "archived": false,
+      "type": "",
+      "staff": "Scott",
+      "tasks": []
     }
   ],
-  "nextId": 115
+  "nextId": 116
 }
