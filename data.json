@@ -791,7 +791,17 @@
       "colorIdx": 3,
       "archived": false,
       "type": "new-construction",
-      "tasks": [],
+      "tasks": [
+        {
+          "id": 118,
+          "name": "Redesign",
+          "days": 1,
+          "done": false,
+          "createdAt": "2026-10-12T18:14:50.599Z",
+          "due": "2026-10-12",
+          "who": "Maddie"
+        }
+      ],
       "staff": "Maddie",
       "designPercent": 0,
       "phasePercents": {
@@ -1122,5 +1132,5 @@
       "tasks": []
     }
   ],
-  "nextId": 118
+  "nextId": 119
 }
