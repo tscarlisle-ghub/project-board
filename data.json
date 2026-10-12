@@ -900,7 +900,7 @@
           "id": 110,
           "name": "review Marbury's schematic pricing",
           "days": 0,
-          "done": false,
+          "done": true,
           "createdAt": "2026-09-16T15:14:58.616384Z",
           "due": null,
           "who": "Scott"
