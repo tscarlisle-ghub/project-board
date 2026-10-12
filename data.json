@@ -1137,24 +1137,6 @@
         "CD": 0,
         "CA": 0
       }
-    },
-    {
-      "id": 116,
-      "name": "shoemaker",
-      "colorIdx": 0,
-      "archived": false,
-      "type": "",
-      "staff": "Scott",
-      "tasks": [
-        {
-          "id": 117,
-          "name": "Pricing Set",
-          "days": 7,
-          "done": false,
-          "due": "2026-10-19",
-          "createdAt": "2026-10-12T18:08:38.476Z"
-        }
-      ]
     }
   ],
   "nextId": 118
